@@ -1,6 +1,7 @@
 package backend.dev.api.traffic
 
-import backend.dev.model.NetworkLog
+import backend.dev.model.NetworkTraffic
+import backend.dev.model.PutUsernameInIp
 import backend.dev.util.JsonFileManagerContract
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,35 +14,35 @@ class TrafficApiImpl: TrafficApi, KoinComponent {
 
     val jsonManager by inject<JsonFileManagerContract>()
 
-    override fun getTrafficByIp(ip: String): Flow<List<NetworkLog>> = flow {
+    override fun getTrafficByIp(sourceIp: String): Flow<List<NetworkTraffic>> = flow {
         val jsonMockData = jsonManager.readJsonFromFile(filePath)
-        val trafficData: List<NetworkLog> = Json.decodeFromString(jsonMockData)
-        val filteredData = trafficData.filter { it.source_ip == ip}
+        val trafficData: List<NetworkTraffic> = Json.decodeFromString(jsonMockData)
+        val filteredData = trafficData.filter { it.source_ip == sourceIp}
         emit(filteredData)
         println(filteredData)
     }
 
-    override fun setUsernameToIp(networkLogForUsernameChange: NetworkLog) {
+    override fun updateUsernameInIp(sourceIp: String, putUsernameInIp: PutUsernameInIp): NetworkTraffic? {
         val jsonMockData = jsonManager.readJsonFromFile(filePath)
-        var trafficData: List<NetworkLog> = Json.decodeFromString(jsonMockData)
+        var trafficData: List<NetworkTraffic> = Json.decodeFromString(jsonMockData)
 
         trafficData = trafficData.map { log ->
-            if (log.source_ip == networkLogForUsernameChange.source_ip){
-                log.copy(username = networkLogForUsernameChange.username)
+            if (log.source_ip == sourceIp) {
+                log.copy(username = putUsernameInIp.username)
             } else {
                 log
             }
-
         }
 
         val updatedJson = Json.encodeToString(trafficData)
-
         jsonManager.writeJsonToFile(filePath, updatedJson)
+
+        return trafficData.find { it.source_ip == sourceIp }
     }
 
-    override fun getAllTrafficStats(): Flow<List<NetworkLog>> = flow {
+    override fun getAllTrafficStats(): Flow<List<NetworkTraffic>> = flow {
         val jsonMockData = jsonManager.readJsonFromFile(filePath)
-        val trafficData: List<NetworkLog> = Json.decodeFromString(jsonMockData)
+        val trafficData: List<NetworkTraffic> = Json.decodeFromString(jsonMockData)
         emit(trafficData)
     }
     companion object {

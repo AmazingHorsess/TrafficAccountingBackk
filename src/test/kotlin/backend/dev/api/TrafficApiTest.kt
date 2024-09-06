@@ -1,9 +1,8 @@
 package backend.dev.api
 
 import backend.dev.api.traffic.TrafficApiImpl
-import backend.dev.model.NetworkLog
+import backend.dev.model.NetworkTraffic
 import backend.dev.util.JsonFileManager
-import backend.dev.util.JsonFileManagerContract
 import io.mockk.*
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
@@ -27,18 +26,18 @@ class TrafficApiTest: BaseApiTest() {
     fun setUp() {
         trafficApi = TrafficApiImpl()
         val initialData = listOf(
-            NetworkLog("192.168.1.10", "192.168.1.20", 1024, 1024, 8080,username = null,"2024-09-05T10:15:30Z"),
-            NetworkLog("192.168.1.11", "192.168.1.21", 2048, 2048, 7070, username = "Device1","2024-09-05T10:15:30Z")
+            NetworkTraffic("192.168.1.10", "192.168.1.20", 1024, 1024, 8080,username = null,"2024-09-05T10:15:30Z"),
+            NetworkTraffic("192.168.1.11", "192.168.1.21", 2048, 2048, 7070, username = "Device1","2024-09-05T10:15:30Z")
         )
         val jsonData = Json.encodeToString(initialData)
     }
 
     @Test
     fun testGetTrafficByIp() = runTest{
-        val updatedLog = NetworkLog("192.168.1.10", "192.168.1.20", 6000, 1024, 10, "user1","2024-09-05T10:15:30Z")
+        val updatedLog = NetworkTraffic("192.168.1.10", "192.168.1.20", 6000, 1024, 10, "user1","2024-09-05T10:15:30Z")
         val updatedData = listOf(
             updatedLog,
-            NetworkLog("192.168.1.11", "192.168.1.21", 1024, 2048, 7070, username = null,"2024-09-05T10:15:30Z"),
+            NetworkTraffic("192.168.1.11", "192.168.1.21", 1024, 2048, 7070, username = null,"2024-09-05T10:15:30Z"),
         )
         val updatedJson = Json.encodeToString(updatedData)
 
@@ -48,7 +47,7 @@ class TrafficApiTest: BaseApiTest() {
         every { jsonManager.writeJsonToFile(any(), any()) } just Runs
 
         // Выполняем метод
-        trafficApi.setUsernameToIp(updatedLog)
+        trafficApi.updateUsernameInIp(updatedLog)
 
         // Проверяем, что запись в файл была вызвана с обновленными данными
         verify { jsonManager.writeJsonToFile("src/main/resources/trafficmockcollection.json", updatedJson) }

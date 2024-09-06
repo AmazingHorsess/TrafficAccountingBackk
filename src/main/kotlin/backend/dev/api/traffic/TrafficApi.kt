@@ -1,11 +1,12 @@
 package backend.dev.api.traffic
 
-import backend.dev.model.NetworkLog
+import backend.dev.model.PutUsernameInIp
+import backend.dev.model.NetworkTraffic
 import kotlinx.coroutines.flow.Flow
 
 
 interface TrafficApi {
-    fun getTrafficByIp(ip: String): Flow<List<NetworkLog>>
-    fun setUsernameToIp(networkLogForUsernameChange: NetworkLog)
-    fun getAllTrafficStats(): Flow<List<NetworkLog>>
+    fun getTrafficByIp(sourceIp: String): Flow<List<NetworkTraffic>>
+    fun updateUsernameInIp(sourceIp: String, putUsernameInIp: PutUsernameInIp): NetworkTraffic?
+    fun getAllTrafficStats(): Flow<List<NetworkTraffic>>
 }

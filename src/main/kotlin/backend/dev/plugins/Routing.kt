@@ -1,7 +1,7 @@
 package backend.dev.plugins
 
 import backend.dev.api.traffic.TrafficApiImpl
-import backend.dev.model.NetworkLog
+import backend.dev.model.NetworkTraffic
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
@@ -64,11 +64,10 @@ fun Application.configureRouting() {
 
         }
         post("/updateUsername") {
-            val updateRequest = call.receive<NetworkLog>()
-            api.setUsernameToIp(updateRequest)
+            val updateRequest = call.receive<NetworkTraffic>()
+            api.updateUsernameInIp(updateRequest)
             call.respondText("Username updated successfully", status = HttpStatusCode.OK)
         }
-
 
     }
 }
