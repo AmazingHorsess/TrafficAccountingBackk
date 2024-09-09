@@ -40,7 +40,7 @@ class TrafficApiImpl: TrafficApi, KoinComponent {
         return trafficData.find { it.source_ip == sourceIp }
     }
 
-    override fun getAllTrafficStats(): Flow<List<NetworkTraffic>> = flow {
+    override fun getAllTraffic(): Flow<List<NetworkTraffic>> = flow {
         val jsonMockData = jsonManager.readJsonFromFile(filePath)
         val trafficData: List<NetworkTraffic> = Json.decodeFromString(jsonMockData)
         emit(trafficData)

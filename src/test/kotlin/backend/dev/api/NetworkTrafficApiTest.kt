@@ -13,7 +13,7 @@ import kotlinx.serialization.json.Json
 import org.junit.Before
 import org.junit.Test
 
-class TrafficApiTest: BaseApiTest() {
+class NetworkTrafficApiTest: BaseApiTest() {
 
     private val api: TrafficApiImpl = TrafficApiImpl()
 
@@ -57,7 +57,7 @@ class TrafficApiTest: BaseApiTest() {
     fun testGetAllTrafficStats() = runTest {
         val api = spyk(trafficApi) // Используем spyk для частичного мока
 
-        val result = api.getAllTrafficStats().toList()
+        val result = api.getAllTraffic().toList()
         assertTrue(result.isNotEmpty())
         assertEquals(2, result[0].size) // Проверка на количество начальных элементов
     }

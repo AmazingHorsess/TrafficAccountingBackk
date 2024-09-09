@@ -22,8 +22,7 @@ class TrafficControllerImp: BaseController(),TrafficController,KoinComponent {
     }
 
     override suspend fun getAllTrafficStats(): Flow<List<NetworkTraffic>> {
-        trafficApi.getAllTrafficStats()
+        trafficApi.getAllTraffic()
+
     }
-
-
 }

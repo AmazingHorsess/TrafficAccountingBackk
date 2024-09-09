@@ -1,12 +1,10 @@
 package backend.dev.plugins
 
 import backend.dev.api.traffic.TrafficApiImpl
-import backend.dev.model.NetworkTraffic
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +27,7 @@ fun Application.configureRouting() {
 
         get("/") {
             val trafficData = withContext(Dispatchers.IO) {
-                api.getAllTrafficStats().toList()
+                api.getAllTraffic().toList()
             }
             delay(600)
 
@@ -63,11 +61,7 @@ fun Application.configureRouting() {
             }
 
         }
-        post("/updateUsername") {
-            val updateRequest = call.receive<NetworkTraffic>()
-            api.updateUsernameInIp(updateRequest)
-            call.respondText("Username updated successfully", status = HttpStatusCode.OK)
-        }
+       
 
     }
 }
