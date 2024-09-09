@@ -1,7 +1,9 @@
 package backend.dev.api
 
-import org.koin.core.context.GlobalContext.startKoin
-import org.koin.core.context.GlobalContext.stopKoin
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.core.module.Module
+import org.koin.dsl.module
 
 abstract class BaseApiTest {
 
@@ -12,6 +14,7 @@ abstract class BaseApiTest {
     fun startInjection(module: Module) {
         startKoin {
             modules(
+                module
             )
         }
     }

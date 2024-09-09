@@ -25,42 +25,7 @@ fun Application.configureRouting() {
 
 
 
-        get("/") {
-            val trafficData = withContext(Dispatchers.IO) {
-                api.getAllTraffic().toList()
-            }
-            delay(600)
 
-
-            call.respondHtml(HttpStatusCode.OK) {
-                head {
-                    title { +"Traffic Stats" }
-                }
-                body {
-                    h1 { +"Traffic Stats" }
-                    table {
-                        tr {
-                            th { +"Source IP" }
-                            th { +"Destination IP" }
-                            th { +"Timestamp" }
-                            th { +"Bytes" }
-                            th { +"Packets" }
-                            th { +"Username" }
-                        }
-                        for (log in trafficData.flatten()) {
-                            tr {
-                                td { +log.source_ip }
-                                td { +log.destination_ip }
-                                td { +log.timestamp }
-                                td { +log.packet_length.toString() }
-                                td { +log.username!! ?: "N/A" }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
        
 
     }

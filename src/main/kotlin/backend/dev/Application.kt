@@ -32,11 +32,7 @@ fun main() {
                     module{
                         single { config }
                         single<DatabaseProvider> { DatabaseProviderImpl() }
-
-
                         single<JsonFileManagerContract>{JsonFileManager}
-
-
                     },
                     ApiInjection.koinBeans,
                     ModulesInjection.koinBeans,
