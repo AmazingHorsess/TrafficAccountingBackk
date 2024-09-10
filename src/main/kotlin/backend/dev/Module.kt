@@ -1,6 +1,7 @@
 package backend.dev
 
 import backend.dev.api.traffic.TrafficApi
+import backend.dev.modules.traffic.trafficModule
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -44,6 +45,7 @@ fun Application.module(){
     }
 
     install(Routing){
+        trafficModule()
 
     }
 

@@ -7,6 +7,8 @@ import backend.dev.database.DatabaseProvider
 import backend.dev.database.DatabaseProviderImpl
 import backend.dev.database.injection.DaoInjection
 import backend.dev.modules.injection.ModulesInjection
+import backend.dev.modules.traffic.TrafficController
+import backend.dev.modules.traffic.TrafficControllerImpl
 import backend.dev.util.JsonFileManager
 import backend.dev.util.JsonFileManagerContract
 import com.typesafe.config.ConfigFactory
@@ -32,7 +34,8 @@ fun main() {
                     module{
                         single { config }
                         single<DatabaseProvider> { DatabaseProviderImpl() }
-                        single<JsonFileManagerContract>{JsonFileManager}
+                        single<JsonFileManagerContract>{ JsonFileManager}
+                        single<TrafficController> {TrafficControllerImpl()}
                     },
                     ApiInjection.koinBeans,
                     ModulesInjection.koinBeans,
@@ -43,8 +46,7 @@ fun main() {
         }
 
     }.start(wait = true)
-    api.getAllTraffic()
-    api.getTrafficByIp("192.198.1.1")
+
 }
 
 fun Application.main() {

@@ -3,7 +3,6 @@ package backend.dev.api.traffic
 import backend.dev.api.BaseApiTest
 import backend.dev.controllers.instrumentation.TrafficModuleInstrumentation
 import backend.dev.database.dao.TrafficDao
-import backend.dev.model.NetworkTraffic
 import backend.dev.model.PutUsernameInIp
 import io.mockk.clearMocks
 import io.mockk.every
@@ -58,6 +57,8 @@ class TrafficApiTest : BaseApiTest(){
         verify { trafficDao.getTrafficByIp("192.168.1.11") }
     }
 
+
+
     @Test
     fun `when change username on ip will return new username`() = runBlocking{
         val data = TrafficModuleInstrumentation.givenTraffic()
@@ -78,7 +79,6 @@ class TrafficApiTest : BaseApiTest(){
         val result = api.updateUsernameInIp(putUsernameInIp)
         verify { trafficDao.updateUsernameOnIp(putUsernameInIp) }
         assertEquals(updatedTraffic, result)
-
 
     }
 }
