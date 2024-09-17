@@ -1,7 +1,6 @@
 package backend.dev
 
-import backend.dev.api.traffic.TrafficApi
-import backend.dev.modules.traffic.trafficModule
+import backend.dev.modules.traffic.fakeTrafficModule
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -11,11 +10,9 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.koin.ktor.ext.inject
 import org.slf4j.event.Level
 
 fun Application.module(){
-    val trafficApi by inject<TrafficApi>()
 
     install(CallLogging){
         level = Level.DEBUG
@@ -45,7 +42,7 @@ fun Application.module(){
     }
 
     install(Routing){
-        trafficModule()
+        fakeTrafficModule()
 
     }
 

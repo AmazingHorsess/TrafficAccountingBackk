@@ -1,14 +1,13 @@
 package backend.dev
 
-import backend.dev.api.traffic.TrafficApiImpl
-import backend.dev.api.traffic.injection.ApiInjection
+import backend.dev.api.traffic.injection.FakeApiInjection
 import backend.dev.config.Config
 import backend.dev.database.DatabaseProvider
 import backend.dev.database.DatabaseProviderImpl
-import backend.dev.database.injection.DaoInjection
-import backend.dev.modules.injection.ModulesInjection
+import backend.dev.database.injection.FakeDaoInjection
+import backend.dev.modules.injection.FakeControllersInjection
+import backend.dev.modules.traffic.FakeTrafficController
 import backend.dev.modules.traffic.TrafficController
-import backend.dev.modules.traffic.TrafficControllerImpl
 import backend.dev.util.JsonFileManager
 import backend.dev.util.JsonFileManagerContract
 import com.typesafe.config.ConfigFactory
@@ -16,11 +15,13 @@ import io.ktor.server.application.*
 import io.ktor.server.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import org.koin.core.logger.Logger
 import org.koin.dsl.module
 import org.koin.ktor.plugin.Koin
+import org.koin.logger.slf4jLogger
+import org.slf4j.event.Level
 
 fun main() {
-    val api = TrafficApiImpl()
 
     val environment = System.getenv()["ENVIRONMENT"] ?: handleDefaultEnvironment()
     val config = extractConfig(environment,HoconApplicationConfig(ConfigFactory.load()))
@@ -30,16 +31,20 @@ fun main() {
     embeddedServer(Netty, port = config.port){
         module{
             install(Koin){
+                printLogger(level = org.koin.core.logger.Level.DEBUG)
+                slf4jLogger()
                 modules(
                     module{
                         single { config }
-                        single<DatabaseProvider> { DatabaseProviderImpl() }
                         single<JsonFileManagerContract>{ JsonFileManager}
-                        single<TrafficController> {TrafficControllerImpl()}
-                    },
-                    ApiInjection.koinBeans,
-                    ModulesInjection.koinBeans,
-                    DaoInjection.koinBeans
+                        single<TrafficController> { FakeTrafficController()}
+                        single<DatabaseProvider> { DatabaseProviderImpl() }
+                        FakeApiInjection.koinBeans
+                        FakeDaoInjection.koinBeans
+                        FakeControllersInjection.koinBeans
+
+                    }
+
                 )
             }
             main()

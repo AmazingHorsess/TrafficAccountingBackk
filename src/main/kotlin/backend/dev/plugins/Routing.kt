@@ -1,6 +1,5 @@
 package backend.dev.plugins
 
-import backend.dev.api.traffic.TrafficApiImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
@@ -14,7 +13,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.html.*
 
 fun Application.configureRouting() {
-    val api = TrafficApiImpl()
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->

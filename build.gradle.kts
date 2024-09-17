@@ -21,6 +21,19 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 
 }
+tasks.register<JavaExec>("runDev") {
+    group = "application"
+    environment("ENVIRONMENT", "dev")  // Установим переменную окружения для dev
+    mainClass.set("io.ktor.server.netty.EngineMain")
+    classpath = sourceSets["main"].runtimeClasspath
+}
+
+tasks.register<JavaExec>("runProd") {
+    group = "application"
+    environment("ENVIRONMENT", "prod")  // Установим переменную окружения для prod
+    mainClass.set("io.ktor.server.netty.EngineMain")
+    classpath = sourceSets["main"].runtimeClasspath
+}
 
 repositories {
     mavenCentral()

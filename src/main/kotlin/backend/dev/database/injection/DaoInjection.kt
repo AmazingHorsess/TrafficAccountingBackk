@@ -1,11 +1,14 @@
 package backend.dev.database.injection
 
-import backend.dev.database.dao.NetworkTraffic
-import backend.dev.database.dao.TrafficDao
+import backend.dev.database.dao.TrafficLogsDao
+import backend.dev.database.dao.TrafficUsersDao
+import backend.dev.database.dao.tables.TrafficLogs
+import backend.dev.database.dao.tables.Users
 import org.koin.dsl.module
 
 object DaoInjection {
     val koinBeans = module {
-        single<TrafficDao> { NetworkTraffic}
+        single<TrafficLogsDao> { TrafficLogs }
+        single<TrafficUsersDao> { Users }
     }
 }

@@ -1,0 +1,7 @@
+PUT http://localhost:8080/traffic/update-username
+Content-Type: application/json
+
+{
+  "source_ip": "192.168.1.10",
+  "username": "newUsername"
+}

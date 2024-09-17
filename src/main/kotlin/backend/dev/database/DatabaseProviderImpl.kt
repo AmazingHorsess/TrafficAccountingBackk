@@ -1,13 +1,13 @@
 package backend.dev.database
 
 import backend.dev.config.Config
-import backend.dev.database.dao.NetworkTraffic
 import kotlinx.coroutines.newFixedThreadPoolContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
@@ -26,7 +26,7 @@ class DatabaseProviderImpl: DatabaseProvider, KoinComponent {
     override fun init() {
         Database.connect(hikariConfig(config))
         transaction {
-            create(NetworkTraffic)
+            //create(NetworkTraffic)
         }
     }
 
@@ -44,11 +44,7 @@ class DatabaseProviderImpl: DatabaseProvider, KoinComponent {
         }
     }
 
-    override suspend fun <T> dbQuery(block: () -> T): T =
-        withContext(dispatcher){
-            transaction { block() }
-        }
-
-
-
+    override suspend fun <T> dbQuery(block: () -> T): T = withContext(dispatcher){
+        transaction { block() }
+    }
 }
