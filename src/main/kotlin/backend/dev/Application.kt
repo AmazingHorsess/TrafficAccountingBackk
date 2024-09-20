@@ -1,50 +1,50 @@
 package backend.dev
 
-import backend.dev.api.traffic.injection.FakeApiInjection
+import backend.dev.api.traffic.injection.ApiInjection
 import backend.dev.config.Config
 import backend.dev.database.DatabaseProvider
 import backend.dev.database.DatabaseProviderImpl
-import backend.dev.database.injection.FakeDaoInjection
-import backend.dev.modules.injection.FakeControllersInjection
-import backend.dev.modules.traffic.FakeTrafficController
-import backend.dev.modules.traffic.TrafficController
+import backend.dev.database.injection.DaoInjection
+import backend.dev.modules.injection.ControllersInjection
+import backend.dev.modules.traffic.TrafficLogsController
+import backend.dev.modules.traffic.TrafficLogsControllerImpl
 import backend.dev.util.JsonFileManager
 import backend.dev.util.JsonFileManagerContract
+import backend.dev.util.removeMicroseconds
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import org.koin.core.logger.Logger
+import kotlinx.datetime.Clock
 import org.koin.dsl.module
+import org.koin.ktor.ext.inject
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
-import org.slf4j.event.Level
 
 fun main() {
 
     val environment = System.getenv()["ENVIRONMENT"] ?: handleDefaultEnvironment()
     val config = extractConfig(environment,HoconApplicationConfig(ConfigFactory.load()))
-
-
-
     embeddedServer(Netty, port = config.port){
+        println("Starting instance in ${config.host}:${config.port}")
+
         module{
             install(Koin){
                 printLogger(level = org.koin.core.logger.Level.DEBUG)
                 slf4jLogger()
                 modules(
-                    module{
-                        single { config }
-                        single<JsonFileManagerContract>{ JsonFileManager}
-                        single<TrafficController> { FakeTrafficController()}
-                        single<DatabaseProvider> { DatabaseProviderImpl() }
-                        FakeApiInjection.koinBeans
-                        FakeDaoInjection.koinBeans
-                        FakeControllersInjection.koinBeans
-
-                    }
-
+                    listOf(
+                        module {
+                            single { config }
+                            single<JsonFileManagerContract> { JsonFileManager }
+                            single<TrafficLogsController> { TrafficLogsControllerImpl() }
+                            single<DatabaseProvider> { DatabaseProviderImpl() }
+                        },
+                        ApiInjection.koinBeans,
+                        DaoInjection.koinBeans,
+                        ControllersInjection.koinBeans
+                    )
                 )
             }
             main()
@@ -71,5 +71,5 @@ fun extractConfig(environment: String, hoconConfig: HoconApplicationConfig): Con
 
 fun handleDefaultEnvironment(): String {
     println("Falling back to default environment 'dev'")
-    return "dev"
+    return "prod"
 }

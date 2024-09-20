@@ -2,18 +2,19 @@ package backend.dev.model
 
 
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.serializers.InstantIso8601Serializer
 import kotlinx.serialization.Serializable
 import kotlin.String
 
 @Serializable
 data class TrafficLogs(
-    val source_ip: String,
-    val destination_ip: String,
+    val username: String?,
+    val src_ip: String,
+    val dst_ip: String,
     val packet_length: Long,
-    val source_port: Int,
-    val destination_port: Int,
-    val timestamp: Instant,
+    val src_port: Int,
+    val dst_port: Int,
+    @Serializable(with = InstantIso8601Serializer::class) val ts: Instant,
 )
 
 @Serializable

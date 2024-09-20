@@ -5,14 +5,15 @@ import kotlinx.datetime.*
 import kotlin.time.Duration
 
 interface TrafficLogsDao {
+
     fun getAllTraffic(
-        startDate: Instant? = Clock.System.now() - Duration.parse("PT5M"),
-        endDate: Instant? = Clock.System.now(),
+        startDate: Instant?,
+        endDate: Instant?,
     ): List<TrafficLogs>
 
     fun getTrafficBySrcIp(
         sourceIp: String,
-        startDate: Instant? = Clock.System.now() - Duration.parse("PT5M"),
-        endDate: Instant? = Clock.System.now()
+        startDate: Instant?,
+        endDate: Instant?,
     ): List<TrafficLogs?>
 }

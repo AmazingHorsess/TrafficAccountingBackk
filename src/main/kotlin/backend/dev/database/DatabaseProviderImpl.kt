@@ -1,13 +1,14 @@
 package backend.dev.database
 
 import backend.dev.config.Config
+import backend.dev.database.dao.tables.TrafficLogs
+import backend.dev.database.dao.tables.TrafficUsers
 import kotlinx.coroutines.newFixedThreadPoolContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.CoroutineContext
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils.create
@@ -24,24 +25,22 @@ class DatabaseProviderImpl: DatabaseProvider, KoinComponent {
     }
 
     override fun init() {
-        Database.connect(hikariConfig(config))
+        Database.connect(hikari(config))
         transaction {
-            //create(NetworkTraffic)
+            create(TrafficUsers)
+            create(TrafficLogs)
         }
     }
 
-    private fun hikariConfig(mainConfig: Config): HikariDataSource{
-        HikariConfig().run {
-            driverClassName = "com.mysql.jdbc.Driver"
-            jdbcUrl = "jbdc:mysql://${mainConfig.databaseHost}:${mainConfig.databasePort}/${Config.DATABASENAME}"
+    private fun hikari(mainConfig: Config): HikariDataSource {
+        return HikariConfig().apply {
+            driverClassName = "com.mysql.cj.jdbc.Driver"
+            jdbcUrl = "jdbc:mysql://${mainConfig.databaseHost}:${mainConfig.databasePort}/${Config.DATABASENAME}"
             username = Config.DATABASEUSER
             password = Config.DATABASEPASSWORD
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-            validate()
-            return HikariDataSource(this)
-
-        }
+        }.let { HikariDataSource(it) }
     }
 
     override suspend fun <T> dbQuery(block: () -> T): T = withContext(dispatcher){
