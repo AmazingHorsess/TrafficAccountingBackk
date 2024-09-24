@@ -8,9 +8,7 @@ import backend.dev.database.injection.DaoInjection
 import backend.dev.modules.injection.ControllersInjection
 import backend.dev.modules.traffic.TrafficLogsController
 import backend.dev.modules.traffic.TrafficLogsControllerImpl
-import backend.dev.util.JsonFileManager
-import backend.dev.util.JsonFileManagerContract
-import backend.dev.util.removeMicroseconds
+import backend.dev.util.*
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.application.*
 import io.ktor.server.config.*
@@ -40,6 +38,7 @@ fun main() {
                             single<JsonFileManagerContract> { JsonFileManager }
                             single<TrafficLogsController> { TrafficLogsControllerImpl() }
                             single<DatabaseProvider> { DatabaseProviderImpl() }
+                            single<DateFilterService> { DateFilterServiceImpl()}
                         },
                         ApiInjection.koinBeans,
                         DaoInjection.koinBeans,

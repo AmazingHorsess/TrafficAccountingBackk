@@ -19,7 +19,7 @@ data class TrafficLogs(
 
 @Serializable
 data class PutUsernameInIp(
-    val source_ip: String,
+    val src_ip: String,
     val username: String,
 )
 

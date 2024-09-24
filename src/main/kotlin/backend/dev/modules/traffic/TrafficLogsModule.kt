@@ -4,12 +4,10 @@ import io.ktor.http.*
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.toList
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDate
 import org.koin.ktor.ext.inject
 
 fun Route.trafficLogsModule() {
@@ -24,10 +22,8 @@ fun Route.trafficLogsModule() {
             val logsFlow = trafficLogsController.getAllTrafficStats(
                 startDate?.toInstant(TimeZone.UTC),
                 endDate?.toInstant(TimeZone.UTC)
-            )
-            // Собираем данные из Flow
-            val logsList = logsFlow
-            call.respond(logsList)
+            ).toList()
+            call.respond(logsFlow)
         }
 
         get("/{sourceIp}"){
@@ -42,7 +38,7 @@ fun Route.trafficLogsModule() {
                 sourceIp,
                 startDate?.toInstant(TimeZone.UTC),
                 endDate?.toInstant(TimeZone.UTC)
-            )
+            ).toList()
             call.respond(logsFlow)
         }
 

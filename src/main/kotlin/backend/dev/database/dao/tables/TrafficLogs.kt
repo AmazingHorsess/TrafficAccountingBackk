@@ -1,14 +1,17 @@
 package backend.dev.database.dao.tables
 
     import backend.dev.database.dao.TrafficLogsDao
-    import backend.dev.database.util.applyDateFilter
+    import backend.dev.util.DateFilterService
     import kotlinx.datetime.Instant
     import org.jetbrains.exposed.sql.*
     import backend.dev.model.TrafficLogs as ModelTrafficLogs
     import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
     import org.jetbrains.exposed.sql.transactions.transaction
+    import org.koin.core.component.KoinComponent
+    import org.koin.core.component.inject
 
-object TrafficLogs : Table("traffic_logs"), TrafficLogsDao {
+object TrafficLogs : Table("traffic_logs"), TrafficLogsDao,KoinComponent {
+    private val dateFilter by inject<DateFilterService>()
     val src_ip = varchar("src_ip", 15).references(TrafficUsers.src_ip, onDelete = ReferenceOption.CASCADE)
     val dst_ip = varchar("dst_ip", 15)
     val src_port = integer("src_port").check { it greaterEq 0 and (it lessEq 65536) }
@@ -22,7 +25,7 @@ object TrafficLogs : Table("traffic_logs"), TrafficLogsDao {
     ): List<ModelTrafficLogs> {
         return transaction {
             val query = TrafficLogs.leftJoin(TrafficUsers).selectAll()
-            applyDateFilter(query, startDate, endDate)
+            dateFilter.applySqlDateFilter(query, startDate, endDate)
             query.map { it.mapRowToTrafficLogs() }
         }
     }
@@ -35,7 +38,7 @@ object TrafficLogs : Table("traffic_logs"), TrafficLogsDao {
         return transaction {
             val query = TrafficLogs.leftJoin(TrafficUsers).selectAll()
             query.andWhere { src_ip eq sourceIp }
-            applyDateFilter(query, startDate, endDate)
+            dateFilter.applySqlDateFilter(query, startDate, endDate)
             query.map { it.mapRowToTrafficLogs() }
         }
     }

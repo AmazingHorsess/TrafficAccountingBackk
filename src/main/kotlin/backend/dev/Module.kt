@@ -2,6 +2,7 @@ package backend.dev
 
 import backend.dev.database.DatabaseProvider
 import backend.dev.modules.traffic.trafficLogsModule
+import backend.dev.modules.traffic.trafficUsersModule
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -47,6 +48,7 @@ fun Application.module(){
 
     install(Routing){
         trafficLogsModule()
+        trafficUsersModule()
 
     }
 

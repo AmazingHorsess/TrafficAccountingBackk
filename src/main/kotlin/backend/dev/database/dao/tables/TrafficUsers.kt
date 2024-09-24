@@ -20,7 +20,7 @@ object TrafficUsers : Table("users"), TrafficUsersDao {
 
     override fun updateTrafficUsername(putUsernameBody: PutUsernameInIp) {
         return transaction {
-            TrafficUsers.update({ TrafficUsers.src_ip eq src_ip}) {
+            TrafficUsers.update({ TrafficUsers.src_ip eq putUsernameBody.src_ip}) {
                 it[username] = putUsernameBody.username
             }
         }

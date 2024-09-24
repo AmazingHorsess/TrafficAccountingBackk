@@ -1,0 +1,7 @@
+POST http://localhost:8080/traffic_users/traffic_user_body
+Content-Type: application/json
+
+{
+  "src_ip": "192.168.1.10",
+  "username": "user10"
+}

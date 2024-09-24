@@ -3,7 +3,7 @@ package backend.dev.modules.traffic
 import backend.dev.api.traffic.TrafficLogsApi
 import backend.dev.model.TrafficLogs
 import backend.dev.modules.BaseController
-import backend.dev.util.removeMicroseconds
+import backend.dev.util.DateFilterService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -13,11 +13,12 @@ import kotlin.time.Duration
 
 class TrafficLogsControllerImpl: BaseController(), TrafficLogsController, KoinComponent{
     private val trafficLogsApi by inject<TrafficLogsApi>()
+    private val dateFilter by inject<DateFilterService>()
 
 
     override suspend fun getAllTrafficStats(startDate: Instant?, endDate: Instant?): Flow<List<TrafficLogs>> {
         return dbQuery {
-            val (finalStartDate, finalEndDate) = processDates(startDate, endDate)
+            val (finalStartDate, finalEndDate) = dateFilter.processDates(startDate, endDate)
             trafficLogsApi.getAllTraffic(finalStartDate, finalEndDate)
 
         }
@@ -29,20 +30,12 @@ class TrafficLogsControllerImpl: BaseController(), TrafficLogsController, KoinCo
         endDate: Instant?
     ): Flow<List<TrafficLogs?>> {
         return dbQuery {
-            val (finalStartDate, finalEndDate) = processDates(startDate, endDate)
+            val (finalStartDate, finalEndDate) = dateFilter.processDates(startDate, endDate)
             trafficLogsApi.getTrafficByIp(
                 sourceIp,
                 finalStartDate,
                 finalEndDate,
             )
         }
-    }
-
-    private fun processDates(startDate: Instant?, endDate: Instant?): Pair<Instant, Instant> {
-        val initialStartDate = startDate ?: (Clock.System.now() - Duration.parse("PT5M"))
-        val initialEndDate = endDate ?: Clock.System.now()
-        val finalStartDate = removeMicroseconds(initialStartDate)
-        val finalEndDate = removeMicroseconds(initialEndDate)
-        return finalStartDate to finalEndDate
     }
 }
